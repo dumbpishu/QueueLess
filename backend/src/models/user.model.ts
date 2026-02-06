@@ -53,42 +53,11 @@ const userSchema = new Schema<IUser>(
     },
     isActive: {
       type: Boolean,
-      default: false,
+      default: true,
     },
   },
   { timestamps: true },
 );
-
-userSchema.pre("validate", async function (next: any) {
-  try {
-    const provider = this.provider;
-    if (!provider) {
-      return next(new Error("Auth provider is required"));
-    }
-
-    if (provider === AuthProvider.EMAIL) {
-      if (!this.email || !this.password) {
-        return next(new Error("Email and password are required."));
-      }
-    }
-
-    if (provider === AuthProvider.PHONE) {
-      if (!this.phone || !this.password) {
-        return next(new Error("Phone number and password is required."));
-      }
-    }
-
-    if (provider === AuthProvider.GOOGLE) {
-      if (!this.googleId) {
-        return next(new Error("Google ID is required."));
-      }
-    }
-
-    next();
-  } catch (error) {
-    next(error as Error);
-  }
-});
 
 userSchema.pre<IUser>("save", async function (next: any) {
   try {
