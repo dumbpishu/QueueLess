@@ -1,6 +1,5 @@
-import { date, z } from "zod";
+import { z } from "zod";
 import { AuthProvider, UserRole } from "../types/user.type";
-import { IUser } from "../types/user.type";
 
 const fullNameSchema = z
   .string()
