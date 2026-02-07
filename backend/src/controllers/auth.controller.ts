@@ -4,34 +4,24 @@ import {
   loginValidationSchema,
 } from "../utils/validations/auth.validation";
 import { AuthService } from "../services/auth.service";
+import { asyncHandler } from "../utils/asyncHandler";
+import { ApiResponse } from "../utils/ApiResponse";
 
 export class AuthController {
-  static async Register(req: Request, res: Response) {
-    try {
-      const body = registerValidationSchema.parse(req.body);
+  static register = asyncHandler(async (req: Request, res: Response) => {
+    const body = registerValidationSchema.parse(req.body);
 
-      const { token, user } = await AuthService.register(body);
+    const { token, user } = await AuthService.register(body);
 
-      res.cookie("token", token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === "production",
-        sameSite: "strict",
-        maxAge: 24 * 60 * 60 * 1000,
-      });
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
-      return res.status(201).json({
-        success: true,
-        message: "User created successfully!",
-        data: {
-          fullName: user.fullName,
-          email: user?.email,
-          phone: user?.phone,
-          role: user?.role,
-          provider: user?.provider,
-        },
-      });
-    } catch (error) {
-      console.log("Error in register");
-    }
-  }
+    return res
+      .status(201)
+      .json(new ApiResponse(201, user, "User registered successfully"));
+  });
 }
