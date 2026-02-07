@@ -79,6 +79,13 @@ const providerValidation = (data: any, ctx: z.RefinementCtx) => {
         });
       }
       break;
+
+    default:
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Invalid auth provider",
+        path: ["provider"],
+      });
   }
 };
 
