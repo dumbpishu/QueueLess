@@ -8,7 +8,7 @@ import { asyncHandler } from "../utils/asyncHandler";
 import { ApiResponse } from "../utils/ApiResponse";
 
 export class AuthController {
-  static Register = asyncHandler(async (req: Request, res: Response) => {
+  static register = asyncHandler(async (req: Request, res: Response) => {
     const body = registerValidationSchema.parse(req.body);
 
     const { token, user } = await AuthService.register(body);
@@ -22,10 +22,10 @@ export class AuthController {
 
     return res
       .status(201)
-      .json(new ApiResponse(201, user, "User registered successfully"));
+      .json(new ApiResponse(201, "User registered successfully", user));
   });
 
-  static Login = asyncHandler(async (req: Request, res: Response) => {
+  static login = asyncHandler(async (req: Request, res: Response) => {
     const data = loginValidationSchema.parse(req.body);
 
     const { token, user } = await AuthService.login(data);
@@ -39,6 +39,18 @@ export class AuthController {
 
     return res
       .status(200)
-      .json(new ApiResponse(200, user, "User logged in successfully"));
+      .json(new ApiResponse(200, "User logged in successfully", user));
+  });
+
+  static logout = asyncHandler(async (req: Request, res: Response) => {
+    res.clearCookie("token", {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    });
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, "User logged out successfully"));
   });
 }
