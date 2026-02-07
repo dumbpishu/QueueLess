@@ -9,7 +9,7 @@ export class UserRepository {
 
   // find by email
   static async findByEmail(email: string) {
-    return User.findOne({ email }).select("+password").lean();
+    return User.findOne({ email }).select("+password");
   }
 
   // find by phone

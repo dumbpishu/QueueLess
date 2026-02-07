@@ -25,3 +25,9 @@ export interface IUser extends Document {
   createdAt: Date;
   updatedAt: Date;
 }
+
+export interface IUserMethods {
+  comparePassword(enteredPassword: string): Promise<boolean>;
+}
+
+export type IUserDocument = Document & IUser & IUserMethods;
